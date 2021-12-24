@@ -8,18 +8,37 @@ services:
     domainname: ${LOCAL_DOMAIN}
     hostname: minio
     command: server /data --console-address ":9001"
-    env_file: [".env", ".minio.env"]
+    env_file: [ ".env", ".minio.env" ]
+#    volumes:
+#      - ./minio.logs:/minio.logs
     ports:
       - 9000:9000
       - 9001:9001
+    environment:
+      - MINIO_HTTP_TRACE=/tmp.minio.log
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      test: [ "CMD", "curl", "-f", "http://localhost:9000/minio/health/live" ]
       interval: 30s
       timeout: 20s
       retries: 3
     networks:
       devenv:
         ipv4_address: ${IPV4_PREFIX}.160
+
+  mc:
+    container_name: mc
+    image: ${MINIO_CONSOLE_IMAGE}:${MINIO_CONSOLE_VERSION}
+    entrypoint: [ "/createUser.sh" ]
+    env_file: [ ".env", ".minio.env" ]
+    volumes:
+      - ./createUser.sh:/createUser.sh
+      - ./../../vendor/hosts:/etc/hosts
+    depends_on:
+      minio:
+        condition: service_healthy
+    networks:
+      devenv:
+        ipv4_address: ${IPV4_PREFIX}.161
 
 networks:
   devenv:
