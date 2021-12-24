@@ -1,0 +1,27 @@
+version: "2.4"
+
+services:
+  minio:
+    container_name: minio
+    image: ${MINIO_IMAGE}:${MINIO_VERSION}
+    restart: on-failure
+    domainname: ${LOCAL_DOMAIN}
+    hostname: minio
+    command: server /data --console-address ":9001"
+    env_file: [".env", ".minio.env"]
+    ports:
+      - 9000:9000
+      - 9001:9001
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+    networks:
+      devenv:
+        ipv4_address: ${IPV4_PREFIX}.160
+
+networks:
+  devenv:
+    external:
+      name: basenet_internet
