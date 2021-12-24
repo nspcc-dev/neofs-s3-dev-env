@@ -49,7 +49,7 @@ down:
 .PHONY: vendor/hosts
 vendor/hosts:
 	@mkdir -p ./vendor
-	@echo "# CDN services:" > $@
+	@echo "# s3 services:" > $@
 	@for service in $(HOSTS_SVCS); do \
 		file="services/$${service}/.hosts"; \
 		[[ -r "$${file}" ]] && \
@@ -64,7 +64,16 @@ vendor/hosts:
 hosts: vendor/hosts
 	@cat vendor/hosts
 
-# Clean-up the envirinment
+# Clean-up the environment
 .PHONY: clean
 clean:
-	@rm -rf vendor
+	@rm -rf vendor tests
+
+# Prepare tests
+.PHONY: prepare.tests
+prepare.tests: prepare.minio
+	@./bin/prepareTests.sh
+
+
+tests.minio: prepare.tests
+	@./bin/runTests.sh services/minio/s3tests.conf

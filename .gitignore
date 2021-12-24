@@ -1,3 +1,10 @@
-.idea
-.vscode
-vendor
+.idea/
+.vscode/
+vendor/
+tests/
+
+*.log
+
+services/minio/s3tests.conf
+services/minio/minio.logs
+
