@@ -8,7 +8,7 @@ host = S3_HOST
 port = S3_PORT
 
 ## say "False" to disable TLS
-is_secure = False
+is_secure = S3_TLS
 
 ## say "False" to disable SSL Verify
 ssl_verify = False

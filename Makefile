@@ -26,27 +26,22 @@ STOP_SVCS = $(shell tac .services | grep -v \\\#)
 # List of hosts available in devenv
 HOSTS_SVCS = $(shell tac .services | grep -v \\\#)
 
-# Pull all required Docker images
-.PHONY: pull
-pull:
-	$(foreach SVC, $(PULL_SVCS), $(shell cd services/$(SVC) && docker-compose pull))
-	@:
-
-# Get all services artifacs
-.PHONY: get
-get: $(foreach SVC, $(GET_SVCS), get.$(SVC))
-	@:
-
-.PHONY: up
 up: pull get vendor/hosts
 	$(foreach SVC, $(START_SVCS), $(shell docker-compose -f services/$(SVC)/docker-compose.yml up -d))
 
 # Stop environment
-.PHONY: down
 down:
 	$(foreach SVC, $(STOP_SVCS), $(shell docker-compose -f services/$(SVC)/docker-compose.yml down -v))
 
-.PHONY: vendor/hosts
+# Pull all required Docker images
+pull:
+	$(foreach SVC, $(PULL_SVCS), $(shell cd services/$(SVC) && docker-compose pull))
+	@:
+
+# Get all services artifacts
+get: $(foreach SVC, $(GET_SVCS), get.$(SVC))
+	@:
+
 vendor/hosts:
 	@mkdir -p ./vendor
 	@echo "# s3 services:" > $@
@@ -60,20 +55,19 @@ vendor/hosts:
 	done >> $@
 
 # Display changes for /etc/hosts
-.PHONY: hosts
 hosts: vendor/hosts
 	@cat vendor/hosts
 
 # Clean-up the environment
-.PHONY: clean
 clean:
-	@rm -rf vendor tests
+	@rm -rf vendor tests services/*/s3tests.conf
 
 # Prepare tests
-.PHONY: prepare.tests
-prepare.tests: prepare.minio
+prepare.tests:
 	@./bin/prepareTests.sh
 
-
-tests.minio: prepare.tests
+tests.minio: prepare.tests prepare.minio
 	@./bin/runTests.sh services/minio/s3tests.conf
+
+tests.s3-gw: prepare.tests prepare.s3-gw
+	@./bin/runTests.sh services/s3-gw/s3tests.conf
