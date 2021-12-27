@@ -10,5 +10,4 @@ fi
 
 echo "Run s3tests_boto3.functional tests"
 
-S3TEST_CONF=$1 ./tests/virtualenv/bin/nosetests -v --nologcapture --debug-log=debug.log \
- s3tests_boto3.functional.test_s3:test_object_copy_same_bucket
+S3TEST_CONF=$1 ./tests/virtualenv/bin/nosetests -v --nologcapture s3tests_boto3.functional
