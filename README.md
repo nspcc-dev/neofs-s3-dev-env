@@ -20,6 +20,7 @@ Ensure you have the following software installed:
 * docker
 * make 
 * git
+* jq
 
 To run tests on minio storage run:
 
