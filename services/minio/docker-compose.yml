@@ -7,7 +7,7 @@ services:
     restart: on-failure
     domainname: ${LOCAL_DOMAIN}
     hostname: minio
-    command: server /data --console-address ":9001"
+    command: server /data{1...4} --console-address ":9001"
     env_file: [ ".env", ".minio.env" ]
 #    volumes:
 #      - ./minio.logs:/minio.logs
