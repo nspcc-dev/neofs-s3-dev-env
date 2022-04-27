@@ -1,46 +1,45 @@
-# neofs-s3-tests
-Extension for https://github.com/nspcc-dev/neofs-dev-env to compare s3 compatible object storages
+# neofs-s3-dev-env
 
-## How it's organized
+Extension for https://github.com/nspcc-dev/neofs-dev-env to compare s3 compatible object storages: NeoFS S3 GW and minio. 
 
-Main commands and targets to manage devenv's services are in `Makefile`.
+## Prerequisites
 
-Each service is defined in it's own directory under `services/` with all
-required files to run and scripts to get external artifacts or dependencies.
-
-The list of services and the starting order is defined in `.services` file. You
-can comment out services you don't want to start or add your own new services.
-
-## Get started
-
-### Prerequisites
 Ensure you have the following software installed:
-* python-virtualenv
 * docker-compose 
 * docker
 * make 
 * git
-* jq
+* jq 
+* python3.6 -- quick tutorials for some distros see [here](https://github.com/nspcc-dev/s3-tests/blob/master/NEOFS_README.md)
 
-To run tests on minio storage run:
+## Quick Start
 
+### NeoFS S3 GW
+
+Make sure that `neofs-dev-env` is started with zero fees. To set zero fees, go to folder of `neofs-dev-env` and execute:
+```bash
+$ make update.container_fee val=0 && make update.container_alias_fee val=0
 ```
-$ make up
-Pulling minio ... done
-Pulling mc    ... done
-Creating minio ... done
-Creating mc    ... done
+Then inside a folder `neofs-s3-dev-env` run the tests:
+```bash
+$ make tests.s3-gw
+```
 
+### Other services
+
+Supported services:
+* minio
+
+To start services execute:
+```bash
+$ make up
+```
+
+### Minio
+
+To run testing of minio:
+```bash
 $ make tests.minio
-Forming s3tests.conf
-Preparing s3-tests
-Tests are already downloaded. Nothing to do
-Run s3tests_boto3.functional tests
-s3tests_boto3.functional.test_headers.test_object_create_bad_md5_invalid_short ... ok
-s3tests_boto3.functional.test_headers.test_object_create_bad_md5_bad ... ok
-s3tests_boto3.functional.test_headers.test_object_create_bad_md5_empty ... ok
-...
-s3tests_boto3.functional.test_headers.test_object_create_bad_md5_none ... ok
 ```
 
 ## Notable make targets
@@ -48,21 +47,32 @@ s3tests_boto3.functional.test_headers.test_object_create_bad_md5_none ... ok
 `make help` will print the brief description of available targets. Here we
 describe some of them in a more detailed way.
 
-### up
-
-Start all Devenv services.
-
-This target call `pull` to get container images, `get` to download required
-artifacts, `vendor/hosts` to generate hosts file and then starts all services in
-the order defined in `.services` file.
-
 ### prepare.tests
 
-Downloads compatibility tests and forming configuration files for services.
+Clones repository [nspcc-dev/s3-test](https://github.com/nspcc-dev/s3-tests), creates isolated Python environment using `virtualenv` in subdirectory `tests`. 
 
-### tests.minio
+### prepare.s3-gw
 
-Run compatibility tests on minio storage.
+Issues secrets for two wallets with [authmate](https://github.com/nspcc-dev/neofs-s3-gw/blob/master/docs/authmate.md) and creates a `.conf` file with filled credentials for `s3-tests`.
+
+### tests.s3-gw
+
+Runs tests on S3-GW from `neofs-dev-env`.
+
+### prepare.minio
+
+Creates a `.conf` file with filled credentials for `s3-tests`.
+
+### tests.minio 
+
+Runs tests on minio.
+
+### up
+
+Starts all Devenv services.
+
+This target call `pull` to get container images, `get` to download required
+artifacts, `vendor/hosts` to generate hosts file and then starts all services in the order defined in `.services` file.
 
 ### down
 
@@ -71,7 +81,9 @@ changes made inside containers will be lost.
 
 ### clean
 
-Clean up `vendor` and `tests` directories.
+Clean up `vendor` and `tests` directories and created `.conf` files.
+
+
 
 # License
 
