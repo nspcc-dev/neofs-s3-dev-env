@@ -7,40 +7,58 @@ include .env
 # help target
 include help.mk
 
-# Targets to get required artifacts and external resources for each service
--include services/*/artifacts.mk
-
-# Targets helpful to prepare service environment
--include services/*/prepare.mk
-
-# Services that require artifacts
-GET_SVCS = $(shell grep -Rl "get.*:" ./services/* | sort -u | grep artifacts.mk | xargs -I {} dirname {} | xargs -I {} basename -a {})
-
-# Services that require pulling images
-PULL_SVCS = $(shell cat .services | grep -v \\\#)
-
-# List of services to run
-START_SVCS = $(shell cat .services | grep -v \\\#)
+# Services
+SVCS = $(shell cat .services | grep -v \\\#)
 STOP_SVCS = $(shell tac .services | grep -v \\\#)
 
-# List of hosts available in devenv
-HOSTS_SVCS = $(shell tac .services | grep -v \\\#)
+# Tests
+# Prepare tests
+prepare.tests:
+	@./bin/prepareTests.sh
 
-up: pull get vendor/hosts
-	$(foreach SVC, $(START_SVCS), $(shell docker-compose -f services/$(SVC)/docker-compose.yml up -d))
+# Remove temp files
+clean:
+	@rm -rf vendor tests services/*/s3tests.conf
 
-# Stop environment
+# S3 GW
+# Form config for testing of NeoFS S3 GW
+prepare.s3-gw:
+	@echo "Forming s3-gw s3tests.conf"
+	@./services/s3-gw/formConf.sh
+
+# Run tests on NeoFS S3 GW
+tests.s3-gw: prepare.tests prepare.s3-gw
+	@./bin/runTests.sh services/s3-gw/s3tests.conf
+
+
+# Services
+# minio
+# Form config for testing of minio
+prepare.minio:
+	@echo "Forming s3tests.conf"
+	@./services/minio/formConf.sh
+
+# Run tests on minio
+tests.minio: prepare.tests prepare.minio
+	@./bin/runTests.sh services/minio/s3tests.conf
+
+# Up services
+up: pull vendor/hosts
+	$(foreach SVC, $(SVCS), $(shell docker-compose -f services/$(SVC)/docker-compose.yml up -d))
+
+# Stop services
 down:
 	$(foreach SVC, $(STOP_SVCS), $(shell docker-compose -f services/$(SVC)/docker-compose.yml down -v))
 
-# Pull all required Docker images
+# Pull docker images of services
 pull:
-	$(foreach SVC, $(PULL_SVCS), $(shell cd services/$(SVC) && docker-compose pull))
+	$(foreach SVC, $(SVCS), $(shell cd services/$(SVC) && docker-compose pull))
 	@:
 
-# Get all services artifacts
-get: $(foreach SVC, $(GET_SVCS), get.$(SVC))
-	@:
+# Hosts
+# Display changes for /etc/hosts
+hosts: vendor/hosts
+	@cat vendor/hosts
 
 vendor/hosts:
 	@mkdir -p ./vendor
@@ -53,21 +71,3 @@ vendor/hosts:
 			                                                 | sed 's|NEOFS_DOMAIN|$(NEOFS_DOMAIN)|g'; \
 		done < $${file}; \
 	done >> $@
-
-# Display changes for /etc/hosts
-hosts: vendor/hosts
-	@cat vendor/hosts
-
-# Clean-up the environment
-clean:
-	@rm -rf vendor tests services/*/s3tests.conf
-
-# Prepare tests
-prepare.tests:
-	@./bin/prepareTests.sh
-
-tests.minio: prepare.tests prepare.minio
-	@./bin/runTests.sh services/minio/s3tests.conf
-
-tests.s3-gw: prepare.tests prepare.s3-gw
-	@./bin/runTests.sh services/s3-gw/s3tests.conf
