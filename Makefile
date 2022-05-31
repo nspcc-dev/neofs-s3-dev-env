@@ -26,9 +26,10 @@ prepare.s3-gw:
 	@echo "Forming s3-gw s3tests.conf"
 	@./services/s3-gw/formConf.sh
 
-# Run tests on NeoFS S3 GW
+# Run tests on NeoFS S3 GW, set TEST variable via appending `TEST=path-to-test` to run tests from a specific file or a specific test
+TEST=""
 tests.s3-gw: prepare.tests prepare.s3-gw
-	@./bin/runTests.sh services/s3-gw/s3tests.conf
+	@./bin/runTests.sh services/s3-gw/s3tests.conf $(TEST)
 
 
 # Services
