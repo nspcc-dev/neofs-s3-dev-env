@@ -59,9 +59,9 @@ echo "access_key=${access_key_alt}, secret_key=${secret_key_alt}"
 
 cp -f services/s3tests.conf.template ${CONF_FILE}
 
-sed -i "s/S3_HOST/s3.neofs.devenv/g" ${CONF_FILE}
-sed -i "s/S3_TLS/True/g" ${CONF_FILE}
-sed -i "s/S3_PORT/8080/g" ${CONF_FILE}
+sed -i "s/S3_HOST/${S3_GW_HOST}/g" ${CONF_FILE}
+sed -i "s/S3_TLS/${S3_GW_TLS}/g" ${CONF_FILE}
+sed -i "s/S3_PORT/${S3_GW_PORT}/g" ${CONF_FILE}
 sed -i "s/S3_MAIN_ACCESS_KEY/${access_key_main}/g" ${CONF_FILE}
 sed -i "s/S3_MAIN_SECRET_KEY/${secret_key_main}/g" ${CONF_FILE}
 sed -i "s/S3_ALT_ACCESS_KEY/${access_key_alt}/g" ${CONF_FILE}
