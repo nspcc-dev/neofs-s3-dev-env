@@ -10,4 +10,9 @@ fi
 
 echo "Run s3tests_boto3.functional tests"
 
-S3TEST_CONF=$1 ./tests/virtualenv/bin/nosetests -v --nologcapture s3tests_boto3.functional
+if [ "$2" ]
+then
+  S3TEST_CONF=$1 ./tests/virtualenv/bin/nosetests -v --nologcapture s3tests_boto3.functional.$2
+else
+  S3TEST_CONF=$1 ./tests/virtualenv/bin/nosetests -v --nologcapture s3tests_boto3.functional
+fi

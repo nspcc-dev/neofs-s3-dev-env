@@ -25,6 +25,15 @@ Then inside a folder `neofs-s3-dev-env` run the tests:
 $ make tests.s3-gw
 ```
 
+You can set a variable `TEST` and specify a file which you want to run tests from:
+```bash
+$ make tests.s3-gw TEST=test_s3 
+```
+Or specify a test: 
+```bash
+$ make tests.s3-gw TEST=test_s3:test_object_copy_versioned_bucket          
+```
+
 ### Other services
 
 Supported services:
