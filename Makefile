@@ -16,9 +16,13 @@ STOP_SVCS = $(shell tac .services | grep -v \\\#)
 prepare.tests:
 	@./bin/prepareTests.sh
 
-# Remove temp files
-clean:
-	@rm -rf vendor tests services/*/s3tests.conf
+# Remove config
+clean.config:
+	@rm -rf services/*/s3tests.conf
+
+# Remove all temp files
+clean: clean.config
+	@rm -rf vendor tests
 
 # S3 GW
 # Form config for testing of NeoFS S3 GW
