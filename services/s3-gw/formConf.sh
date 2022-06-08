@@ -47,7 +47,7 @@ fi
 access_key_main=$(echo ${result_main} | jq -r '.access_key_id')
 secret_key_main=$(echo ${result_main} | jq -r '.secret_access_key')
 user_id_main=$(echo ${result_main} | jq -r '.wallet_public_key') 
-echo "access_key=${access_key_main}, secret_key=${secret_key_main}"
+echo "access_key = ${access_key_main}, secret_key = ${secret_key_main}"
 
 echo "Issuing a secret for alt wallet"
 result_alt=$(issue_secret wallet_alt)
@@ -57,7 +57,7 @@ fi
 access_key_alt=$(echo ${result_alt} | jq -r '.access_key_id')
 secret_key_alt=$(echo ${result_alt} | jq -r '.secret_access_key')
 user_id_alt=$(echo ${result_alt} | jq -r '.wallet_public_key') 
-echo "access_key=${access_key_alt}, secret_key=${secret_key_alt}"
+echo "access_key = ${access_key_alt}, secret_key = ${secret_key_alt}"
 
 cp -f services/s3tests.conf.template ${CONF_FILE}
 
