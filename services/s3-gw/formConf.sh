@@ -46,6 +46,7 @@ if [ -z "$result_main" ]; then
 fi
 access_key_main=$(echo ${result_main} | jq -r '.access_key_id')
 secret_key_main=$(echo ${result_main} | jq -r '.secret_access_key')
+user_id_main=$(echo ${result_main} | jq -r '.wallet_public_key') 
 echo "access_key=${access_key_main}, secret_key=${secret_key_main}"
 
 echo "Issuing a secret for alt wallet"
@@ -55,6 +56,7 @@ if [ -z "$result_alt" ]; then
 fi
 access_key_alt=$(echo ${result_alt} | jq -r '.access_key_id')
 secret_key_alt=$(echo ${result_alt} | jq -r '.secret_access_key')
+user_id_alt=$(echo ${result_alt} | jq -r '.wallet_public_key') 
 echo "access_key=${access_key_alt}, secret_key=${secret_key_alt}"
 
 cp -f services/s3tests.conf.template ${CONF_FILE}
@@ -64,9 +66,13 @@ sed -i "s/S3_TLS/${S3_GW_TLS}/g" ${CONF_FILE}
 sed -i "s/S3_PORT/${S3_GW_PORT}/g" ${CONF_FILE}
 sed -i "s/S3_MAIN_ACCESS_KEY/${access_key_main}/g" ${CONF_FILE}
 sed -i "s/S3_MAIN_SECRET_KEY/${secret_key_main}/g" ${CONF_FILE}
+sed -i "s/S3_MAIN_USER_ID/${user_id_main}/g" ${CONF_FILE}
 sed -i "s/S3_ALT_ACCESS_KEY/${access_key_alt}/g" ${CONF_FILE}
 sed -i "s/S3_ALT_SECRET_KEY/${secret_key_alt}/g" ${CONF_FILE}
+sed -i "s/S3_ALT_USER_ID/${user_id_alt}/g" ${CONF_FILE}
 sed -i "s/S3_TENANT_ACCESS_KEY/${access_key_alt}/g" ${CONF_FILE}
 sed -i "s/S3_TENANT_SECRET_KEY/${secret_key_alt}/g" ${CONF_FILE}
+sed -i "s/S3_TENANT_USER_ID/${user_id_alt}/g" ${CONF_FILE}
 sed -i "s/S3_IAM_ACCESS_KEY/${access_key_alt}/g" ${CONF_FILE}
 sed -i "s/S3_IAM_SECRET_KEY/${secret_key_alt}/g" ${CONF_FILE}
+sed -i "s/S3_IAM_USER_ID/${user_id_alt}/g" ${CONF_FILE}
