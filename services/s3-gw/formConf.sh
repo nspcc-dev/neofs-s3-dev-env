@@ -11,13 +11,13 @@ if [ -f "$CONF_FILE" ]; then
 fi
 
 
-if [ ! -f "./bin/authmate" ]; then
-  echo "Downloading authmate"
-  curl -L https://github.com/nspcc-dev/neofs-s3-gw/releases/download/"${S3_GW_VERSION}"/neofs-authmate-linux-amd64 --output ./bin/authmate
+if [ ! -f "./bin/s3-authmate" ]; then
+  echo "Downloading s3-authmate"
+  curl -L https://github.com/nspcc-dev/neofs-s3-gw/releases/download/"${S3_GW_VERSION}"/neofs-s3-authmate-linux-amd64 --output ./bin/s3-authmate
   if [ $? -eq 0 ]; then
-    chmod +x ./bin/authmate
+    chmod +x ./bin/s3-authmate
   else
-    echo "Couldn't download authmate"
+    echo "Couldn't download s3-authmate"
     exit 1
   fi
 fi
@@ -25,7 +25,7 @@ fi
 issue_secret () {
   local -n wallet=$1
   local -n err
-  result=$(AUTHMATE_WALLET_PASSPHRASE=${wallet[password]} ./bin/authmate issue-secret --wallet ${wallet[path]} \
+  result=$(AUTHMATE_WALLET_PASSPHRASE=${wallet[password]} ./bin/s3-authmate issue-secret --wallet ${wallet[path]} \
   --peer s01.neofs.devenv:8080 --gate-public-key ${GATE_PUBLIC_KEY} \
   --bearer-rules ./services/s3-gw/bearer_rules.json) 
   echo ${result}
