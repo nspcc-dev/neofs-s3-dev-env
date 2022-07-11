@@ -5,5 +5,5 @@ tests/
 
 *.log
 
-bin/authmate
+bin/s3-authmate
 services/*/s3tests.conf
