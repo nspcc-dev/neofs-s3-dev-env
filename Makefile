@@ -61,10 +61,11 @@ pull:
 	@:
 
 # Hosts
-# Display changes for /etc/hosts
+# Generate and display changes for /etc/hosts
 hosts: vendor/hosts
 	@cat vendor/hosts
 
+# Generate changes for /etc/hosts
 vendor/hosts:
 	@mkdir -p ./vendor
 	@echo "# s3 services:" > $@
