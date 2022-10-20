@@ -34,6 +34,14 @@ Or specify a test:
 $ make tests.s3-gw TEST=test_s3:test_object_copy_versioned_bucket          
 ```
 
+After execution, you can find results in `s3-gw.results`:
+```shell
+$ cat s3-gw.results
+...
+s3tests_boto3.functional.test_s3.test_object_copy_versioned_bucket ... ok
+...
+```
+
 ### Other services
 
 Supported services:
@@ -49,6 +57,14 @@ $ make up
 To run testing of minio:
 ```bash
 $ make tests.minio
+```
+
+After execution, you can find results in `minio.results`:
+```shell
+$ cat minio.results
+...
+s3tests_boto3.functional.test_s3.test_bucket_create_naming_bad_short_one ... ok
+...
 ```
 
 ## Notable make targets
