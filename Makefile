@@ -33,7 +33,8 @@ prepare.s3-gw:
 # Run tests on NeoFS S3 GW, set TEST variable via appending `TEST=path-to-test` to run tests from a specific file or a specific test
 TEST=""
 tests.s3-gw: prepare.tests prepare.s3-gw
-	@./bin/runTests.sh services/s3-gw/s3tests.conf $(TEST)
+	@./bin/runTests.sh services/s3-gw/s3tests.conf $(TEST) \
+	  2>&1 | tee >(grep -e '^s3tests_boto3.functional' --line-buffered > s3-gw.results)
 
 
 # Services
@@ -45,7 +46,8 @@ prepare.minio:
 
 # Run tests on minio
 tests.minio: prepare.tests prepare.minio
-	@./bin/runTests.sh services/minio/s3tests.conf
+	@./bin/runTests.sh services/minio/s3tests.conf \
+	  2>&1 | tee >(grep -e '^s3tests_boto3.functional' --line-buffered > minio.results)
 
 # Up services
 up: pull vendor/hosts
