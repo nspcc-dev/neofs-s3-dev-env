@@ -13,7 +13,7 @@ fi
 
 if [ ! -f "./bin/s3-authmate" ]; then
   echo "Downloading s3-authmate"
-  curl -L https://github.com/nspcc-dev/neofs-s3-gw/releases/download/"${S3_GW_VERSION}"/neofs-s3-authmate-linux-amd64 --output ./bin/s3-authmate
+  curl -L "$S3_AUTHMATE_URL" --output ./bin/s3-authmate
   if [ $? -eq 0 ]; then
     chmod +x ./bin/s3-authmate
   else
@@ -27,7 +27,7 @@ issue_secret () {
   local -n err
   result=$(AUTHMATE_WALLET_PASSPHRASE=${wallet[password]} ./bin/s3-authmate issue-secret --wallet ${wallet[path]} \
   --peer s01.neofs.devenv:8080 --gate-public-key ${GATE_PUBLIC_KEY} \
-  --bearer-rules ./services/s3-gw/bearer_rules.json) 
+  --bearer-rules ./services/s3-gw/bearer_rules.json)
   echo ${result}
 }
 
@@ -46,7 +46,7 @@ if [ -z "$result_main" ]; then
 fi
 access_key_main=$(echo ${result_main} | jq -r '.access_key_id')
 secret_key_main=$(echo ${result_main} | jq -r '.secret_access_key')
-user_id_main=$(echo ${result_main} | jq -r '.wallet_public_key') 
+user_id_main=$(echo ${result_main} | jq -r '.wallet_public_key')
 echo "access_key = ${access_key_main}, secret_key = ${secret_key_main}"
 
 echo "Issuing a secret for alt wallet"
@@ -56,7 +56,7 @@ if [ -z "$result_alt" ]; then
 fi
 access_key_alt=$(echo ${result_alt} | jq -r '.access_key_id')
 secret_key_alt=$(echo ${result_alt} | jq -r '.secret_access_key')
-user_id_alt=$(echo ${result_alt} | jq -r '.wallet_public_key') 
+user_id_alt=$(echo ${result_alt} | jq -r '.wallet_public_key')
 echo "access_key = ${access_key_alt}, secret_key = ${secret_key_alt}"
 
 cp -f services/s3tests.conf.template ${CONF_FILE}
