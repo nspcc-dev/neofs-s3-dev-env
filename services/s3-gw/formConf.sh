@@ -47,7 +47,8 @@ fi
 access_key_main=$(echo ${result_main} | jq -r '.access_key_id')
 secret_key_main=$(echo ${result_main} | jq -r '.secret_access_key')
 user_id_main=$(echo ${result_main} | jq -r '.wallet_public_key')
-echo "access_key = ${access_key_main}, secret_key = ${secret_key_main}"
+user_display_name_main=$(cat ${wallet_main[path]} | jq -r '.accounts[0].address')
+echo "access_key = ${access_key_main}, secret_key = ${secret_key_main}, display_name = ${user_display_name_main}"
 
 echo "Issuing a secret for alt wallet"
 result_alt=$(issue_secret wallet_alt)
@@ -67,6 +68,7 @@ sed -i "s/S3_PORT/${S3_GW_PORT}/g" ${CONF_FILE}
 sed -i "s/S3_MAIN_ACCESS_KEY/${access_key_main}/g" ${CONF_FILE}
 sed -i "s/S3_MAIN_SECRET_KEY/${secret_key_main}/g" ${CONF_FILE}
 sed -i "s/S3_MAIN_USER_ID/${user_id_main}/g" ${CONF_FILE}
+sed -i "s/S3_MAIN_DISPLAY_NAME/${user_display_name_main}/g" ${CONF_FILE}
 sed -i "s/S3_ALT_ACCESS_KEY/${access_key_alt}/g" ${CONF_FILE}
 sed -i "s/S3_ALT_SECRET_KEY/${secret_key_alt}/g" ${CONF_FILE}
 sed -i "s/S3_ALT_USER_ID/${user_id_alt}/g" ${CONF_FILE}
